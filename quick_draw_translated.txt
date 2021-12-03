@@ -1,0 +1,340 @@
+aircraft carrier	lotniskowiec
+airplane	samolot
+alarm clock	budzik
+ambulance	ambulans
+angel	anioł
+ant	mrówka
+anvil	kowadło
+apple	jabłko
+arm	ramię
+asparagus	szparag
+axe	topór
+backpack	plecak
+banana	banan
+bandage	bandaż
+barn	stodoła
+baseball bat	kij baseball'owy
+baseball	baseball
+basket	kosz
+basketball	koszykówka
+bat	nietoperz
+bathtub	wanna
+beach	plaża
+bear	niedźwiedź
+beard	broda
+bed	łóżko
+bee	pszczoła
+belt	pasek
+bench	ławka
+bicycle	rower
+binoculars	lornetka
+bird	ptak
+birthday cake	tort urodzinowy
+blackberry	jeżyna
+blueberry	borówka amerykańska
+book	książka
+boomerang	bumerang
+bottlecap	nakrętka od butelki
+bowtie	muszka
+bracelet	bransoletka
+brain	mózg
+bread	chleb
+bridge	most
+broccoli	brokuły
+broom	miotła
+bucket	wiaderko
+bulldozer	spychacz
+bus	autobus
+bush	krzak
+butterfly	motyl
+cactus	kaktus
+cake	ciasto
+calculator	kalkulator
+calendar	kalendarz
+camel	wielbłąd
+camera	kamera
+camouflage	kamuflaż
+campfire	ognisko
+candle	świeca
+cannon	armata
+canoe	kajak
+car	samochód
+carrot	marchewka
+castle	zamek
+cat	kot
+cell phone	telefon komórkowy
+cello	wiolonczela
+chair	krzesło
+chandelier	żyrandol
+church	kościół
+circle	okrąg
+clarinet	klarnet
+clock	zegar
+cloud	chmura
+coffee cup	filiżanka kawy
+compass	kompas
+computer	komputer
+cookie	ciastko
+cooler	chłodnica
+couch	kanapa
+cow	krowa
+crab	krab
+crayon	pastel
+crocodile	krokodyl
+crown	korona
+cruise ship	statek wycieczkowy
+cup	filiżanka
+diamond	diament
+dishwasher	zmywarka
+diving board	trampolina
+dog	pies
+dolphin	delfin
+donut	pączek
+door	drzwi
+dragon	smok
+dresser	kredens
+drill	wiertarka
+drums	bębny
+duck	kaczka
+dumbbell	hantle
+ear	ucho
+elbow	łokieć
+elephant	słoń
+envelope	koperta
+eraser	gumka do mazania
+eye	oko
+eyeglasses	okulary
+face	twarz
+fan	wentylator
+feather	pióro
+fence	ogrodzenie
+finger	palec
+fire hydrant	hydrant
+fireplace	kominek
+firetruck	wóz strażacki
+fish	ryba
+flamingo	flaming
+flashlight	latarka
+flip flops	klapki
+floor lamp	lampa podłogowa
+flower	kwiat
+flying saucer	latający spodek
+foot	stopa
+fork	widelec
+frog	żaba
+frying pan	patelnia
+garden hose	wąż ogrodowy
+garden	ogród
+giraffe	żyrafa
+goatee	kozia bródka
+golf club	kij golfowy
+grapes	winogrona
+grass	trawa
+guitar	gitara
+hamburger	hamburger
+hammer	młotek
+hand	ręka
+harp	harfa
+hat	kapelusz
+headphones	słuchawki
+hedgehog	jeż
+helicopter	śmigłowiec
+helmet	kask
+hexagon	sześciokąt
+hockey puck	krążek hokejowy
+hockey stick	kij hokejowy
+horse	koń
+hospital	szpital
+hot air balloon	balon
+hot dog	hot dog
+hot tub	jacuzzi
+hourglass	klepsydra
+house plant	roślina domowa
+house	dom
+hurricane	huragan
+ice cream	lody
+jacket	kurtka
+jail	więzienie
+kangaroo	kangur
+key	klucz
+keyboard	klawiatura
+knee	kolano
+knife	nóż
+ladder	drabina
+lantern	latarnia
+laptop	laptop
+leaf	liść
+leg	noga
+light bulb	żarówka
+lighter	zapalniczka
+lighthouse	latarnia morska
+lightning	błyskawica
+line	linia
+lion	lew
+lipstick	pomadka
+lobster	homar
+lollipop	lizak
+mailbox	skrzynka pocztowa
+map	mapa
+marker	marker
+matches	zapałki
+megaphone	megafon
+mermaid	syrena
+microphone	mikrofon
+microwave	kuchenka mikrofalowa
+monkey	małpa
+moon	księżyc
+mosquito	komar
+motorbike	motocykl
+mouse	mysz
+moustache	wąsy
+mouth	usta
+mug	kubek
+mushroom	grzyb
+nail	gwóźdź
+necklace	naszyjnik
+nose	nos
+ocean	ocean
+octagon	ośmiokąt
+octopus	ośmiornica
+onion	cebula
+oven	piekarnik
+owl	sowa
+paint can	puszka farby
+paintbrush	pędzel
+palm tree	palma
+panda	panda
+pants	spodnie
+paper clip	spinacz
+parachute	spadochron
+parrot	papuga
+passport	paszport
+peanut	orzech
+pear	gruszka
+peas	groszek
+pencil	ołówek
+penguin	pingwin
+piano	fortepian
+picture frame	ramka
+pig	świnia
+pillow	poduszka
+pineapple	ananas
+pizza	pizza
+pliers	szczypce
+police car	radiowóz
+pond	staw
+pool	basen
+popsicle	lód na patyku
+postcard	pocztówka
+potato	ziemniak
+power outlet	gniazdo zasilania
+purse	portmonetka
+rabbit	królik
+raccoon	szop pracz
+radio	radio
+rain	deszcz
+rainbow	tęcza
+rake	grabie
+remote control	pilot do telewizora
+rhinoceros	nosorożec
+rifle	karabin
+river	rzeka
+roller coaster	kolejka górska
+rollerskates	rolki
+sailboat	żaglówka
+sandwich	kanapka
+saw	piła
+saxophone	saksofon
+school bus	autobus szkolny
+scissors	nożyce
+scorpion	skorpion
+screwdriver	śrubokręt
+sea turtle	żółw morski
+see saw	huśtać się
+shark	rekin
+sheep	owca
+shoe	but
+shorts	szorty
+shovel	łopata
+skateboard	deskorolka
+skull	czaszka
+skyscraper	wieżowiec
+sleeping bag	śpiwór
+smiley face	uśmiechnięta twarz
+snail	ślimak
+snake	wąż
+snorkel	rurka do nurkowania
+snowflake	płatek śniegu
+snowman	bałwan
+soccer ball	piłka nożna
+sock	skarpetka
+speedboat	motorówka
+spider	pająk
+spoon	łyżka
+spreadsheet	arkusz
+square	kwadrat
+squiggle	zawijas
+squirrel	wiewiórka
+stairs	schody
+star	gwiazda
+steak	stek
+stereo	wieża stereo
+stethoscope	stetoskop
+stitches	szwy
+stop sign	znak stopu
+stove	kuchenka
+strawberry	truskawka
+streetlight	światła
+string bean	fasolka szparagowa
+submarine	łódź podwodna
+suitcase	walizka
+sun	słońce
+swan	łabędź
+sweater	sweter
+swing set	huśtawka
+sword	miecz
+syringe	strzykawka
+t-shirt	podkoszulek
+table	stół
+teapot	czajniczek
+teddy-bear	miś pluszowy
+telephone	telefon
+television	telewizja
+tennis racquet	rakieta tenisowa
+tent	namiot
+The Eiffel Tower	Wieża Eiffla
+The Great Wall of China	Wielki Mur Chiński
+The Mona Lisa	Mona Lisa
+tiger	tygrys
+toaster	toster
+toe	palec u nogi
+toilet	toaleta
+tooth	ząb
+toothbrush	szczoteczka do zębów
+toothpaste	pasta do zębów
+tornado	tornado
+tractor	traktor
+traffic light	sygnalizacja świetlna
+train	pociąg
+tree	drzewo
+triangle	trójkąt
+trombone	puzon
+truck	samochód ciężarowy
+trumpet	trąbka
+umbrella	parasol
+underwear	bielizna
+van	furgonetka
+vase	wazon
+violin	skrzypce
+washing machine	pralka
+watermelon	arbuz
+waterslide	waterslide
+whale	wieloryb
+wheel	koło
+windmill	wiatrak
+wine bottle	butelka wina
+wine glass	lampka wina
+wristwatch	zegarek na rękę
+yoga	joga
+zebra	zebra
+zigzag	zygzak

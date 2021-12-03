@@ -3,8 +3,7 @@ import pickle
 import numpy as np
 import psycopg2
 import tensorflow_datasets.public_api as tfds
-# from urllib.request import urlretrieve
-from translate import Translator
+from urllib.request import urlretrieve
 from pictionary.models import Drawing
 from psycopg2 import Error
 from environs import Env
@@ -13,37 +12,82 @@ env = Env()
 env.read_env()
 
 
+def add_to_database(category, picture):
+    """
+    The function to add picture to database.
+
+    Parameters:
+        category (str): The category name of picture.
+        picture (bytes): The picture bytecode.
+    """
+    if not Drawing.objects.filter(picture=picture).exists():
+        Drawing.objects.create(category=category, picture=picture)
+
+
 class QuickDrawDB:
+    """
+    The class for all operations needed to add QuickDraw dataset to database.
+
+    Constants:
+        BASE_URL (str): The base url address to QuickDraw database.
+        LABELS_PATH (str): The local path to tensorflow file with QuickDraw categories.
+        IMG_SHAPE (tuple): The QuickDraw image shape.
+        FOLDER_PATH (str): The local path to folder with all .npy files.
+        TRANSLATIONS_FILE (str): The local path to file with labels and theirs translations from English to Polish.
+    """
     BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap"
     LABELS_PATH = tfds.core.tfds_path("image_classification/quickdraw_labels.txt")
     IMG_SHAPE = (28, 28, 1)
     FOLDER_PATH = ".quickdraw/"
+    TRANSLATIONS_FILE = "quick_draw_translated.txt"
 
-    def get_labels(self):
+    def get_translations(self):
+        """
+        The function to create dictionary with labels and theirs translations from English to Polish.
+        """
+        with open(self.TRANSLATIONS_FILE, "r") as f:
+            labels = f.read().splitlines()
+            translations = {
+                label.split('\t')[0]: label.split('\t')[1]
+                for label in labels
+            }
+        return translations
+
+    def get_labels_urls(self, translations):
+        """
+        The function to create dictionary with urls to every .npy file.
+        """
         with open(self.LABELS_PATH, "r") as file:
             labels = file.read().splitlines()
             urls = {
                 label: "{}/{}.npy".format(self.BASE_URL, label.replace(" ", "%20"))
                 for label in labels
+                if label in translations.keys()
             }
+        return urls
 
+    def populate(self):
+        """
+        The function to add QuickDraw dataset to database.
+        """
+        translations = self.get_translations()
+        urls = self.get_labels_urls(translations)
         for k, v in urls.items():
             print(k + " " + v)
-            # urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
+            urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
             file = np.load(self.FOLDER_PATH + k.replace(" ", "_") + ".npy",
                            encoding='latin1', allow_pickle=True)
-            translator = Translator(to_lang="pl")
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
                 np_base64 = base64.b64encode(np_bytes)
-                d = Drawing(category=translator.translate(k), picture=np_base64)
-                d.save()
-                print(translator.translate(k))
-                break  # only first image
-            break  # only first file
+                add_to_database(translations[k], np_base64)
+            del file
 
 
 class HerokuDB:
+    """
+    The class for all operations needed to add Heroku dataset to database.
+    """
     USER = env.str("USER")
     PASSWORD = env.str("PASSWORD")
     HOST = env.str("HOST")
@@ -51,6 +95,9 @@ class HerokuDB:
     DATABASE = env.str("DATABASE")
 
     def connect(self):
+        """
+        The function to connect to PostgreSQL Heroku database.
+        """
         try:
             connection = psycopg2.connect(user=self.USER,
                                           password=self.PASSWORD,
@@ -61,7 +108,11 @@ class HerokuDB:
         except (Exception, Error) as error:
             print("Error while connecting to PostgreSQL", error)
 
-    def populate(self, cursor, connection):
+    @staticmethod
+    def populate(cursor, connection):
+        """
+        The function to add Heroku dataset to database.
+        """
         drawing_table = "SELECT b.id, b.picture, a.name FROM pictionary_db_category a " \
                         "INNER JOIN pictionary_db_drawing b on a.id = b.category_id"
         cursor.execute(drawing_table)
@@ -70,15 +121,15 @@ class HerokuDB:
         for drawing in drawing_data:
             print(drawing[2])
             img_data = drawing[1].split('data:image/png;base64,')[1]
-
-            d = Drawing(category=drawing[2], picture=bytes(img_data, 'utf-8'))
-            d.save()
-            break
+            add_to_database(drawing[2], bytes(img_data, 'utf-8'))
 
         cursor.close()
         connection.close()
 
 
+QD = QuickDrawDB()
+QD.populate()
+
 HD = HerokuDB()
 c1, c2 = HD.connect()
-# HD.populate(c1, c2)
+HD.populate(c1, c2)
