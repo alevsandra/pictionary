@@ -12,18 +12,6 @@ env = Env()
 env.read_env()
 
 
-def add_to_database(category, picture):
-    """
-    The function to add picture to database.
-
-    Parameters:
-        category (str): The category name of picture.
-        picture (bytes): The picture bytecode.
-    """
-    if not Drawing.objects.filter(picture=picture).exists():
-        Drawing.objects.create(category=category, picture=picture)
-
-
 class QuickDrawDB:
     """
     The class for all operations needed to add QuickDraw dataset to database.
@@ -72,6 +60,7 @@ class QuickDrawDB:
         """
         translations = self.get_translations()
         urls = self.get_labels_urls(translations)
+        to_add = []
         for k, v in urls.items():
             print(k + " " + v)
             urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
@@ -80,8 +69,12 @@ class QuickDrawDB:
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
                 np_base64 = base64.b64encode(np_bytes)
-                add_to_database(translations[k], np_base64)
+                to_add.append(Drawing(category=translations[k], picture=np_base64))
+                if i == 10000:  # setting a limit
+                    break
             del file
+            Drawing.objects.bulk_create(to_add)
+            to_add.clear()
 
 
 class HerokuDB:
@@ -118,10 +111,15 @@ class HerokuDB:
         cursor.execute(drawing_table)
         drawing_data = cursor.fetchall()
 
+        to_add = []
         for drawing in drawing_data:
             print(drawing[2])
             img_data = drawing[1].split('data:image/png;base64,')[1]
-            add_to_database(drawing[2], bytes(img_data, 'utf-8'))
+            if not Drawing.objects.filter(picture=bytes(img_data, 'utf-8')).exists():
+                to_add.append(Drawing(category=drawing[2], picture=bytes(img_data, 'utf-8')))
+
+        Drawing.objects.bulk_create(to_add)
+        to_add.clear()
 
         cursor.close()
         connection.close()
