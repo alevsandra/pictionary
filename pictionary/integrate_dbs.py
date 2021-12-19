@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import psycopg2
 from urllib.request import urlretrieve
-from pictionary.models import Drawing
+from pictionary.models import Drawing, Category
 from psycopg2 import Error
 from environs import Env
 
@@ -65,10 +65,11 @@ class QuickDrawDB:
             urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
             file = np.load(self.FOLDER_PATH + k.replace(" ", "_") + ".npy",
                            encoding='latin1', allow_pickle=True)
+            category = Category.objects.create(name=translations[k])
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
                 np_base64 = base64.b64encode(np_bytes)
-                to_add.append(Drawing(category=translations[k], picture=np_base64))
+                to_add.append(Drawing(category=category, picture=np_base64))
                 if i == 70000:  # setting a limit
                     break
             del file
@@ -113,9 +114,13 @@ class HerokuDB:
         to_add = []
         for drawing in drawing_data:
             print(drawing[2])
+            if not Category.objects.filter(name=drawing[2]).exists():
+                category = Category.objects.create(name=drawing[2])
+            else:
+                category = Category.objects.get(name=drawing[2])
             img_data = drawing[1].split('data:image/png;base64,')[1]
             if not Drawing.objects.filter(picture=bytes(img_data, 'utf-8')).exists():
-                to_add.append(Drawing(category=drawing[2], picture=bytes(img_data, 'utf-8')))
+                to_add.append(Drawing(category=category, picture=bytes(img_data, 'utf-8')))
 
         Drawing.objects.bulk_create(to_add)
         to_add.clear()

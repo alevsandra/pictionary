@@ -2,7 +2,7 @@ from PIL import Image
 import io
 import base64
 import pickle
-from .models import Drawing
+from .models import Drawing, Category
 import numpy as np
 
 
@@ -15,7 +15,8 @@ class MyImage:
         to_update = []
         for category in self.MY_CATEGORIES:
             print(category, end=": ")
-            image_list = Drawing.objects.filter(category=category)
+            category_id = Category.objects.get(name=category)
+            image_list = Drawing.objects.filter(category=category_id)
 
             for img in image_list:
                 np_bytes = base64.b64decode(img.picture)

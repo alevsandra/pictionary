@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Hasło{% endblock title %}
+
+{% block content %}
+    <div class="mx-auto d-flex bg-light align-items-center flex-column" style="width: 30%;">
+        <div class="p-2">
+            <h1>Hasło:</h1>
+        </div>
+        <div class="p-2">
+            <h1><span class="badge badge-pill badge-dark">{{ category }}</span></h1>
+        </div>
+        <div class="p-2">
+            <a class="btn btn-success" href="{% url 'paint' %}" role="button">Rysuj</a>
+        </div>
+    </div>
+{% endblock content %}
