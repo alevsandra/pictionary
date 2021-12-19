@@ -8,7 +8,6 @@ import numpy as np
 
 class MyImage:
     IMG_SIZE = (28, 28)
-    IMG_SHAPE = (28, 28, 1)
     MY_CATEGORIES = ['warkocz', 'flet', 'Ziemia', 'góry', 'spódnica',
                      'sukienka', 'ogon', 'macka', 'kod kreskowy', 'koza']
 
@@ -50,7 +49,7 @@ class MyImage:
 
                 img.picture = np_base64
                 to_update.append(img)
-            Drawing.objects.bulk_update(to_update, ['picture'])  # 3411223
+            Drawing.objects.bulk_update(to_update, ['picture'])  # 3411666
             print("Updated")
             to_update.clear()
 

@@ -2,7 +2,6 @@ import base64
 import pickle
 import numpy as np
 import psycopg2
-import tensorflow_datasets.public_api as tfds
 from urllib.request import urlretrieve
 from pictionary.models import Drawing
 from psycopg2 import Error
@@ -24,7 +23,7 @@ class QuickDrawDB:
         TRANSLATIONS_FILE (str): The local path to file with labels and theirs translations from English to Polish.
     """
     BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap"
-    LABELS_PATH = tfds.core.tfds_path("image_classification/quickdraw_labels.txt")
+    LABELS_PATH = "picked.txt"
     IMG_SHAPE = (28, 28, 1)
     FOLDER_PATH = ".quickdraw/"
     TRANSLATIONS_FILE = "quick_draw_translated.txt"
@@ -70,7 +69,7 @@ class QuickDrawDB:
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
                 np_base64 = base64.b64encode(np_bytes)
                 to_add.append(Drawing(category=translations[k], picture=np_base64))
-                if i == 10000:  # setting a limit
+                if i == 70000:  # setting a limit
                     break
             del file
             Drawing.objects.bulk_create(to_add)
