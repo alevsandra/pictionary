@@ -3,3 +3,24 @@ html, body {
   height: 100%;
   margin: 0;
 }
+
+#canvas {
+    border: 1px solid black;
+    margin: auto;
+    display: block;
+    background-color: white;
+}
+
+.c-buttons {
+    width: 40px;
+    height: 40px;
+    border-radius: 30%;
+    border: 1px solid #777777;
+    outline: none;
+    padding: 0;
+    margin: 5px;
+}
+
+.c-buttons:hover {
+    opacity: 0.3;
+}
