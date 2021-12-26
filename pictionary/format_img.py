@@ -6,10 +6,27 @@ from .models import Drawing, Category
 import numpy as np
 
 
+def reformat_quick_draw_img():
+    to_update = []
+    categories = Category.objects.filter(pk__lte=40)
+    for category in categories:
+        print(category, end=": ")
+        category_id = Category.objects.get(name=category)
+        image_list = Drawing.objects.filter(category=category_id)
+        for img in image_list:
+            np_array = pickle.loads(img.picture)
+            gray_array = np_array.mean(axis=2).astype(np.float32)
+            np_bytes = pickle.dumps(gray_array)
+            img.picture = np_bytes
+            to_update.append(img)
+        Drawing.objects.bulk_update(to_update, ['picture'])  # 3411666
+        print("Updated")
+        to_update.clear()
+
+
 class MyImage:
     IMG_SIZE = (28, 28)
-    MY_CATEGORIES = ['warkocz', 'flet', 'Ziemia', 'góry', 'spódnica',
-                     'sukienka', 'ogon', 'macka', 'kod kreskowy', 'koza']
+    MY_CATEGORIES = Category.objects.filter(pk__gte=41)
 
     def reformat_image(self):
         to_update = []
@@ -45,10 +62,10 @@ class MyImage:
                 im.thumbnail(self.IMG_SIZE, Image.ANTIALIAS)
 
                 image_array = np.array(im)
-                np_bytes = pickle.dumps(image_array)
-                np_base64 = base64.b64encode(np_bytes)
+                gray_array = image_array.mean(axis=2).astype(np.float32)
+                np_bytes = pickle.dumps(gray_array)
 
-                img.picture = np_base64
+                img.picture = np_bytes
                 to_update.append(img)
             Drawing.objects.bulk_update(to_update, ['picture'])  # 3411666
             print("Updated")
@@ -57,3 +74,5 @@ class MyImage:
 
 MI = MyImage()
 MI.reformat_image()
+
+reformat_quick_draw_img()

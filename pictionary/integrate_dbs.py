@@ -1,4 +1,3 @@
-import base64
 import pickle
 import numpy as np
 import psycopg2
@@ -68,8 +67,7 @@ class QuickDrawDB:
             category = Category.objects.create(name=translations[k])
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
-                np_base64 = base64.b64encode(np_bytes)
-                to_add.append(Drawing(category=category, picture=np_base64))
+                to_add.append(Drawing(category=category, picture=np_bytes))
                 if i == 70000:  # setting a limit
                     break
             del file
