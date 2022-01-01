@@ -2,9 +2,10 @@ import pickle
 import numpy as np
 import psycopg2
 from urllib.request import urlretrieve
-from pictionary.models import Drawing, Category
+from pictionary.models import DrawingTrain, DrawingTest, Category
 from psycopg2 import Error
 from environs import Env
+import random
 
 env = Env()
 env.read_env()
@@ -26,6 +27,8 @@ class QuickDrawDB:
     IMG_SHAPE = (28, 28, 1)
     FOLDER_PATH = ".quickdraw/"
     TRANSLATIONS_FILE = "quick_draw_translated.txt"
+    LIMIT = 70000
+    SPLIT_PROPORTION = 2/3
 
     def get_translations(self):
         """
@@ -58,21 +61,29 @@ class QuickDrawDB:
         """
         translations = self.get_translations()
         urls = self.get_labels_urls(translations)
-        to_add = []
+        train_add = []
+        test_add = []
         for k, v in urls.items():
             print(k + " " + v)
-            urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
+            # urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
             file = np.load(self.FOLDER_PATH + k.replace(" ", "_") + ".npy",
                            encoding='latin1', allow_pickle=True)
-            category = Category.objects.create(name=translations[k])
+            category = Category.objects.get(name=translations[k])
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
-                to_add.append(Drawing(category=category, picture=np_bytes))
-                if i == 70000:  # setting a limit
+                if i <= (self.LIMIT*self.SPLIT_PROPORTION):
+                    train_add.append(DrawingTrain(category=category, picture=np_bytes))
+                elif (self.LIMIT*self.SPLIT_PROPORTION) < i <= self.LIMIT:
+                    test_add.append(DrawingTest(category=category, picture=np_bytes))
+                else:
                     break
             del file
-            Drawing.objects.bulk_create(to_add)
-            to_add.clear()
+        random.shuffle(train_add)
+        DrawingTrain.objects.bulk_create(train_add)
+        train_add.clear()
+        random.shuffle(test_add)
+        DrawingTest.objects.bulk_create(test_add)
+        test_add.clear()
 
 
 class HerokuDB:
@@ -84,6 +95,7 @@ class HerokuDB:
     HOST = env.str("HOST")
     PORT = 5432
     DATABASE = env.str("DATABASE")
+    SPLIT_PROPORTION = 2 / 3
 
     def connect(self):
         """
@@ -99,8 +111,7 @@ class HerokuDB:
         except (Exception, Error) as error:
             print("Error while connecting to PostgreSQL", error)
 
-    @staticmethod
-    def populate(cursor, connection):
+    def populate(self, cursor, connection):
         """
         The function to add Heroku dataset to database.
         """
@@ -109,19 +120,28 @@ class HerokuDB:
         cursor.execute(drawing_table)
         drawing_data = cursor.fetchall()
 
-        to_add = []
-        for drawing in drawing_data:
+        train_add = []
+        test_add = []
+        db_len = len(drawing_data)
+        for i, drawing in enumerate(drawing_data):
             print(drawing[2])
             if not Category.objects.filter(name=drawing[2]).exists():
                 category = Category.objects.create(name=drawing[2])
             else:
                 category = Category.objects.get(name=drawing[2])
             img_data = drawing[1].split('data:image/png;base64,')[1]
-            if not Drawing.objects.filter(picture=bytes(img_data, 'utf-8')).exists():
-                to_add.append(Drawing(category=category, picture=bytes(img_data, 'utf-8')))
+            if i <= (db_len*self.SPLIT_PROPORTION):
+                train_add.append(DrawingTrain(category=category, picture=bytes(img_data, 'utf-8')))
+            else:
+                test_add.append(DrawingTest(category=category, picture=bytes(img_data, 'utf-8')))
 
-        Drawing.objects.bulk_create(to_add)
-        to_add.clear()
+        random.shuffle(train_add)
+        DrawingTrain.objects.bulk_create(train_add)
+        train_add.clear()
+
+        random.shuffle(test_add)
+        DrawingTest.objects.bulk_create(test_add)
+        test_add.clear()
 
         cursor.close()
         connection.close()

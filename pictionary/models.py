@@ -17,7 +17,18 @@ class Category(models.Model):
         return self.name
 
 
-class Drawing(models.Model):
+class DrawingTest(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+    )
+    picture = models.BinaryField()
+
+    def __str__(self):
+        return self.category
+
+
+class DrawingTrain(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,

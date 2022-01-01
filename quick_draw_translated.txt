@@ -79,7 +79,7 @@ cooler	chłodnica
 couch	kanapa
 cow	krowa
 crab	krab
-crayon	pastel
+crayon	kredka
 crocodile	krokodyl
 crown	korona
 cruise ship	statek wycieczkowy
