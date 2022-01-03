@@ -3,3 +3,5 @@ __pycache__/
 db.sqlite3
 .quickdraw/
 pictionary/.ipynb_checkpoints/
+test.npy
+train.npy

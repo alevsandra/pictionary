@@ -65,10 +65,10 @@ class QuickDrawDB:
         test_add = []
         for k, v in urls.items():
             print(k + " " + v)
-            # urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
+            urlretrieve(v, self.FOLDER_PATH + k.replace(" ", "_") + ".npy")
             file = np.load(self.FOLDER_PATH + k.replace(" ", "_") + ".npy",
                            encoding='latin1', allow_pickle=True)
-            category = Category.objects.get(name=translations[k])
+            category = Category.objects.create(name=translations[k])
             for i, np_image in enumerate(file):
                 np_bytes = pickle.dumps(np_image.reshape(self.IMG_SHAPE))
                 if i <= (self.LIMIT*self.SPLIT_PROPORTION):
