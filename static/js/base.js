@@ -90,6 +90,30 @@ window.addEventListener('load', () => {
     });
 
 });
+// function guess_category (){
+//
+//     let guess_name;
+//     if (!isCanvasBlank(canvas)) {
+//         let image = canvas.toDataURL("image/png");
+//
+//         guess_name = $.post(guess_link, {
+//             // category: category_name,
+//             save_image: image,
+//         });
+//         document.getElementById('guess_id').innerHTML = guess_name.name;
+//     }
+//
+// }
+function guess_category() {
+    if (!isCanvasBlank(canvas)){
+        let image = canvas.toDataURL("image/png")
+        $.post(guess_link, {picture: image}, function myCallback(data) {
+        document.getElementById('guess_id').innerHTML = data.category;
+    });
+    }
+
+}
+
 function isCanvasBlank(canvas) {
   return !canvas.getContext('2d')
     .getImageData(0, 0, canvas.width, canvas.height).data

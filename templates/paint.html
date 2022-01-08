@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+
 {% block title %}Rysuj{% endblock title %}
 
 {% block content %}
@@ -7,8 +7,13 @@
     <div class="d-flex justify-content-between">
         <div style="width: 30%;"></div>
         <div class="text-center" style="width: 30%;">
+{#            <div class="alert alert-primary float-right text-center" style="width: 120px;" id="guess_id"></div>#}
+            <h3><span class="badge badge-secondary" id="guess_id"></span></h3>
         </div>
         <div style="width: 30%;">
+            <script type=text/javascript>
+                let guess_link = "{% url 'guess' %}";
+            </script>
             <div class="alert alert-primary float-right text-center" style="width: 120px;" id="count_down"></div>
         </div>
     </div>
@@ -33,7 +38,7 @@
             <button class="btn btn-light" type="button" id="reset">Reset</button>
         </div>
         <div style="width: 30%;">
-
+            <a class="btn btn-success" onclick="guess_category()" role="button">Start</a>
         </div>
     </div>
 

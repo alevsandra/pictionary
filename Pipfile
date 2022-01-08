@@ -10,6 +10,7 @@ matplotlib = "*"
 environs = {version = "==8.0.0", extras = ["django"]}
 torch = "*"
 tqdm = "*"
+simplejson = "*"
 
 [dev-packages]
 
