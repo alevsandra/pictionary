@@ -37,3 +37,10 @@ class DrawingTrain(models.Model):
 
     def __str__(self):
         return self.category
+
+
+class TempCategory(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name

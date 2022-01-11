@@ -5,9 +5,11 @@ var x = setInterval(function onTimer() {
     //updating clock
     document.getElementById('count_down').innerHTML = 0 + " : " + seconds;
     seconds--;
+    guess_category();
     //when countdown ends
     if (seconds < 0) {
         clearInterval(x);
+        delete_temp();
     }
 }, 1000);
 
@@ -21,6 +23,16 @@ function color(color_value) {
         ctx.fillStyle = color_value;
 }
 
+function random_temp_category() {
+    $.post(random_link, {}, function myCallback(data) {
+        location.href = paint;
+    });
+}
+function delete_temp() {
+    $.post(deletion_link, {'csrfmiddlewaretoken': csrftoken}, function myCallback(data) {
+        location.href = data.url;
+    });
+}
 window.addEventListener('load', () => {
 
     //canvas size
@@ -31,7 +43,7 @@ window.addEventListener('load', () => {
     else ctx.canvas.width = 0.60 * window.innerWidth;
 
     let painting = false;
-    let brushSize = 5;
+    let brushSize = 7;
     let brushPos = {x: 0, y: 0};
 
 
@@ -90,25 +102,15 @@ window.addEventListener('load', () => {
     });
 
 });
-// function guess_category (){
-//
-//     let guess_name;
-//     if (!isCanvasBlank(canvas)) {
-//         let image = canvas.toDataURL("image/png");
-//
-//         guess_name = $.post(guess_link, {
-//             // category: category_name,
-//             save_image: image,
-//         });
-//         document.getElementById('guess_id').innerHTML = guess_name.name;
-//     }
-//
-// }
 function guess_category() {
     if (!isCanvasBlank(canvas)){
         let image = canvas.toDataURL("image/png")
         $.post(guess_link, {picture: image}, function myCallback(data) {
         document.getElementById('guess_id').innerHTML = data.category;
+        document.getElementById('guess_id').className = "badge badge-secondary"
+        if(data.category===current_category){
+            document.getElementById('guess_id').className = "badge badge-success";
+        }
     });
     }
 

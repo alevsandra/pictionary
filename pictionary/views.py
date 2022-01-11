@@ -2,11 +2,13 @@ import base64
 import io
 import numpy as np
 from PIL import Image
-
-from django.views.generic import TemplateView
-from .models import Category
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import TemplateView, DeleteView
+from .models import Category, TempCategory
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import HttpResponse
+from django.urls import reverse, reverse_lazy
 import pickle
 import torch
 import simplejson
@@ -22,12 +24,49 @@ class CategoryPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.random()
+        context['category'] = context['new_category'] = TempCategory.objects.get(
+                pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
         return context
 
 
 class PaintAppView(TemplateView):
     template_name = 'paint.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['model'] = TempCategory.objects.all()
+        context['category'] = TempCategory.objects.get(
+                pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
+        return context
+
+
+class DeleteCategoryView(SuccessMessageMixin, DeleteView):
+    model = TempCategory
+
+    def get_success_url(self, **kwargs):
+        if TempCategory.objects.exists():
+            return reverse_lazy('category')
+        else:
+            return reverse_lazy('home')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = TempCategory.objects.get(pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
+        name = self.object.name
+        request.session['name'] = name  # name will be change according to your need
+        message = request.session['name'] + ' deleted successfully'
+        messages.success(self.request, message)
+        return super(DeleteCategoryView, self).delete(request, *args, **kwargs)
+
+
+@csrf_protect
+def delete_temp(request):
+    if request.method == 'POST':
+        TempCategory.objects.get(pk=min(TempCategory.objects.filter().values_list('pk', flat=True))).delete()
+        if TempCategory.objects.exists():
+            json_dump = simplejson.dumps({'url': reverse('category')})
+        else:
+            json_dump = simplejson.dumps({'url': reverse('jome')})
+        return HttpResponse(json_dump, content_type='application/json')
 
 
 @csrf_exempt
@@ -38,12 +77,28 @@ def guess(request):
         image = (request.POST['picture']).split('data:image/png;base64,')[1]
         img = reformat_image(image)
         model = pickle.load(open("cnn_model.sav", "rb"))
-        print(model)
         output = model(torch.tensor(img).view(-1, 1, 28, 28).to(device))[0]
         prediction = torch.argmax(output)
         category = Category.objects.get(pk=prediction+1)
         json_dump = simplejson.dumps({'category': category.name})
         print("Duration: {}".format(datetime.now() - start_time))
+        return HttpResponse(json_dump, content_type='application/json')
+
+
+@csrf_exempt
+def random_temp(request):
+    if request.method == 'POST':
+        # adding randomly to model TempCategory 5 categories
+        while len(TempCategory.objects.all()) < 5:
+            s = Category.objects.random()
+            if not TempCategory.objects.filter(name=s).exists():
+                TempCategory.objects.create(name=s)
+
+        # picking up the first category with the smallest id
+        category_f = TempCategory.objects.get(
+            pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
+        # forwarding first category id to request response
+        json_dump = simplejson.dumps({'pid': category_f.pk})
         return HttpResponse(json_dump, content_type='application/json')
 
 
@@ -71,8 +126,9 @@ def reformat_image(img):
 
     im = im.crop((x1, y1, x2, y2))
 
-    im.thumbnail((28, 28), Image.ANTIALIAS)
+    im.thumbnail((26, 26), Image.ANTIALIAS)
 
     image_array = np.array(im)
     gray_array = image_array.mean(axis=2).astype(np.float32)
+    gray_array = np.pad(gray_array, 1, mode='constant')
     return gray_array / 255
