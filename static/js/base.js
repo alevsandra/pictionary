@@ -5,7 +5,6 @@ var x = setInterval(function onTimer() {
     //updating clock
     document.getElementById('count_down').innerHTML = 0 + " : " + seconds;
     seconds--;
-    guess_category();
     //when countdown ends
     if (seconds < 0) {
         clearInterval(x);
@@ -24,7 +23,7 @@ function color(color_value) {
 }
 
 function random_temp_category() {
-    $.post(random_link, {}, function myCallback(data) {
+    $.post(random_link, {}, function myCallback() {
         location.href = paint;
     });
 }
@@ -85,6 +84,7 @@ window.addEventListener('load', () => {
         ctx.closePath();
         painting = false;
         e.preventDefault();
+        guess_category();
     }
 
     canvas.addEventListener('mousedown', start);
@@ -102,18 +102,24 @@ window.addEventListener('load', () => {
     });
 
 });
+var image_temp="";
 function guess_category() {
-    if (!isCanvasBlank(canvas)){
-        let image = canvas.toDataURL("image/png")
+    if (!isCanvasBlank(canvas) && image_temp!==canvas.toDataURL("image/png")){
+        let image = canvas.toDataURL("image/png");
+        image_temp = canvas.toDataURL("image/png");
         $.post(guess_link, {picture: image}, function myCallback(data) {
-        document.getElementById('guess_id').innerHTML = data.category;
-        document.getElementById('guess_id').className = "badge badge-secondary"
-        if(data.category===current_category){
-            document.getElementById('guess_id').className = "badge badge-success";
-        }
-    });
+            document.getElementById('guess_id').innerHTML = data.category;
+            document.getElementById('guess_id').className = "badge badge-secondary";
+            if (data.category === current_category) {
+                document.getElementById('guess_id').className = "badge badge-success";
+                delay(1000).then(() => delete_temp());
+            }
+        });
     }
 
+}
+function delay(time) {
+  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 function isCanvasBlank(canvas) {

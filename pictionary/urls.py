@@ -4,7 +4,8 @@ from .views import (HomePageView,
                     PaintAppView,
                     guess,
                     random_temp,
-                    delete_temp)
+                    delete_temp,
+                    ResultPageView)
 
 urlpatterns = [
     path('', HomePageView.as_view(), name='home'),
@@ -13,4 +14,5 @@ urlpatterns = [
     path('random/', random_temp, name='random_temp'),
     path('usun/', delete_temp, name='delete_category'),
     path('zgaduj/', guess, name='guess'),
+    path('koniec/', ResultPageView.as_view(), name='result'),
 ]

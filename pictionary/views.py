@@ -2,18 +2,17 @@ import base64
 import io
 import numpy as np
 from PIL import Image
-from django.contrib import messages
-from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic import TemplateView, DeleteView
+from django.views.generic import TemplateView
 from .models import Category, TempCategory
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.http import HttpResponse
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 import pickle
 import torch
 import simplejson
 from datetime import datetime
 
+points_number = 0
 
 class HomePageView(TemplateView):
     template_name = 'home.html'
@@ -40,22 +39,13 @@ class PaintAppView(TemplateView):
         return context
 
 
-class DeleteCategoryView(SuccessMessageMixin, DeleteView):
-    model = TempCategory
+class ResultPageView(TemplateView):
+    template_name = 'result.html'
 
-    def get_success_url(self, **kwargs):
-        if TempCategory.objects.exists():
-            return reverse_lazy('category')
-        else:
-            return reverse_lazy('home')
-
-    def delete(self, request, *args, **kwargs):
-        self.object = TempCategory.objects.get(pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
-        name = self.object.name
-        request.session['name'] = name  # name will be change according to your need
-        message = request.session['name'] + ' deleted successfully'
-        messages.success(self.request, message)
-        return super(DeleteCategoryView, self).delete(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['points'] = points_number
+        return context
 
 
 @csrf_protect
@@ -65,7 +55,7 @@ def delete_temp(request):
         if TempCategory.objects.exists():
             json_dump = simplejson.dumps({'url': reverse('category')})
         else:
-            json_dump = simplejson.dumps({'url': reverse('jome')})
+            json_dump = simplejson.dumps({'url': reverse('result')})
         return HttpResponse(json_dump, content_type='application/json')
 
 
@@ -78,8 +68,12 @@ def guess(request):
         img = reformat_image(image)
         model = pickle.load(open("cnn_model.sav", "rb"))
         output = model(torch.tensor(img).view(-1, 1, 28, 28).to(device))[0]
-        prediction = torch.argmax(output)
+        prediction = output.argmax()
         category = Category.objects.get(pk=prediction+1)
+        global points_number
+        if category.name == TempCategory.objects.get(
+                pk=min(TempCategory.objects.filter().values_list('pk', flat=True))).name:
+            points_number += 1
         json_dump = simplejson.dumps({'category': category.name})
         print("Duration: {}".format(datetime.now() - start_time))
         return HttpResponse(json_dump, content_type='application/json')
@@ -98,6 +92,8 @@ def random_temp(request):
         category_f = TempCategory.objects.get(
             pk=min(TempCategory.objects.filter().values_list('pk', flat=True)))
         # forwarding first category id to request response
+        global points_number
+        points_number = 0
         json_dump = simplejson.dumps({'pid': category_f.pk})
         return HttpResponse(json_dump, content_type='application/json')
 
@@ -131,4 +127,4 @@ def reformat_image(img):
     image_array = np.array(im)
     gray_array = image_array.mean(axis=2).astype(np.float32)
     gray_array = np.pad(gray_array, 1, mode='constant')
-    return gray_array / 255
+    return gray_array / np.max(gray_array)

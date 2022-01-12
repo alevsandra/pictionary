@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Koniec gry{% endblock title %}
+
+{% block content %}
+    <br/>
+    <div class="jumbotron">
+        <script type=text/javascript>
+                var random_link = "{% url 'random_temp' %}";
+                var paint = "{% url 'category' %}";
+        </script>
+        <h1 class="display-4">Masz {{ points }}/5 punktów!</h1>
+        <p class="lead">Aby przejść ponownie kliknij start:</p>
+        <hr class="my-4">
+        <a class="btn btn-success" onclick="random_temp_category()" role="button">Start</a>
+    </div>
+{% endblock content %}

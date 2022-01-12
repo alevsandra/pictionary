@@ -13,7 +13,7 @@ or call:\n
 def init_django(project_name=None):
     os.chdir(PWD)
     project_name = project_name or os.environ.get('DJANGO_PROJECT') or None
-    if project_name == None:
+    if project_name is None:
         raise Exception(PROJ_MISSING_MSG)
     sys.path.insert(0, PWD)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')

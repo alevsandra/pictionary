@@ -1,17 +1,15 @@
 //setting countdown
-let seconds = 3;
+let seconds = 30;
 //countdown function
 var x = setInterval(function onTimer() {
     //updating clock
     document.getElementById('count_down').innerHTML = 0 + " : " + seconds;
     seconds--;
+    guess_category();
     //when countdown ends
     if (seconds < 0) {
         clearInterval(x);
         delete_temp();
-    }
-    else{
-        guess_category();
     }
 }, 1000);
 
@@ -26,7 +24,7 @@ function color(color_value) {
 }
 
 function random_temp_category() {
-    $.post(random_link, {}, function myCallback(data) {
+    $.post(random_link, {}, function myCallback() {
         location.href = paint;
     });
 }
@@ -112,6 +110,7 @@ function guess_category() {
         document.getElementById('guess_id').className = "badge badge-secondary"
         if(data.category===current_category){
             document.getElementById('guess_id').className = "badge badge-success";
+            delete_temp();
         }
     });
     }
