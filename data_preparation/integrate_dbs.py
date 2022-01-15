@@ -23,10 +23,10 @@ class QuickDrawDB:
         TRANSLATIONS_FILE (str): The local path to file with labels and theirs translations from English to Polish.
     """
     BASE_URL = "https://storage.googleapis.com/quickdraw_dataset/full/numpy_bitmap"
-    LABELS_PATH = "picked.txt"
+    LABELS_PATH = "data_preparation/picked.txt"
     IMG_SHAPE = (28, 28, 1)
     FOLDER_PATH = ".quickdraw/"
-    TRANSLATIONS_FILE = "quick_draw_translated.txt"
+    TRANSLATIONS_FILE = "data_preparation/quick_draw_translated.txt"
     LIMIT = 70000
     SPLIT_PROPORTION = 2/3
 

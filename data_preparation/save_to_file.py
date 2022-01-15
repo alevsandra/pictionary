@@ -1,6 +1,6 @@
 import pickle
 import numpy as np
-from .models import DrawingTrain, DrawingTest
+from pictionary.models import DrawingTrain, DrawingTest
 
 
 def save_to_file(model, file):

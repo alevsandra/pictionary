@@ -2,7 +2,7 @@ from PIL import Image
 import io
 import base64
 import pickle
-from .models import DrawingTrain, DrawingTest, Category
+from pictionary.models import DrawingTrain, DrawingTest, Category
 import numpy as np
 
 
