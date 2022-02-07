@@ -16,7 +16,7 @@ def reformat_quick_draw_img(model):
         for img in image_list:
             np_array = pickle.loads(img.picture)
             gray_array = np_array.mean(axis=2).astype(np.float32)
-            gray_array = gray_array/255
+            gray_array = gray_array/np.max(gray_array)
             np_bytes = pickle.dumps(gray_array)
             img.picture = np_bytes
             to_update.append(img)
@@ -26,7 +26,7 @@ def reformat_quick_draw_img(model):
 
 
 class MyImage:
-    IMG_SIZE = (28, 28)
+    IMG_SIZE = (26, 26)
     MY_CATEGORIES = Category.objects.filter(pk__gte=41)
 
     def reformat_image(self, model):
@@ -64,7 +64,8 @@ class MyImage:
 
                 image_array = np.array(im)
                 gray_array = image_array.mean(axis=2).astype(np.float32)
-                gray_array = gray_array/255
+                gray_array = np.pad(gray_array, 1, mode='constant')
+                gray_array = gray_array/np.max(gray_array)
                 np_bytes = pickle.dumps(gray_array)
 
                 img.picture = np_bytes
